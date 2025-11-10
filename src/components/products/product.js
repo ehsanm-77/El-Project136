@@ -1,13 +1,13 @@
 import { El } from "../../utils/el.js";
+import { store } from "../../utils/store";
 
 export function Products() {
-	const API_URL = "https://6908e3c92d902d0651b20c81.mockapi.io/users"; // آدرس پروژه‌ت تو mockapi.io
+	const API_URL = "https://6908e3c92d902d0651b20c81.mockapi.io/users";
 	const container = El({
 		element: "div",
 		className: "p-6 flex flex-col gap-4",
 	});
 
-	// === فرم اضافه کردن محصول (POST) ===
 	const form = El({
 		element: "form",
 		className: "flex gap-2",
@@ -33,17 +33,14 @@ export function Products() {
 		],
 	});
 
-	// اضافه کردن فرم بالای لیست
 	container.append(form);
 
-	// === لیست محصولات ===
 	const productsGrid = El({
 		element: "div",
 		className: "grid grid-cols-3 gap-4",
 	});
 	container.append(productsGrid);
 
-	// 🧠 تابع GET: دریافت لیست محصولات
 	async function fetchProducts() {
 		productsGrid.innerHTML = "Loading...";
 		try {
@@ -51,7 +48,8 @@ export function Products() {
 			const data = await res.json();
 
 			productsGrid.innerHTML = "";
-			console.log(data);
+			store.setState("productsCount", data.length);
+
 			data.forEach((item) => {
 				const card = El({
 					element: "div",
@@ -96,7 +94,6 @@ export function Products() {
 							],
 						}),
 
-						// دکمه حذف (DELETE)
 						El({
 							element: "button",
 							innerText: "Delete",
@@ -123,10 +120,10 @@ export function Products() {
 		} catch (err) {
 			console.error(err);
 			productsGrid.innerHTML = "❌ Failed to load products.";
+			store.setState("productsCount", 0);
 		}
 	}
 
-	// 🚀 POST: اضافه کردن محصول جدید
 	form.addEventListener("submit", async (e) => {
 		e.preventDefault();
 
@@ -145,7 +142,6 @@ export function Products() {
 		fetchProducts();
 	});
 
-	// بارگذاری اولیه محصولات
 	fetchProducts();
 
 	return container;
