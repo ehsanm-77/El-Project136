@@ -1,48 +1,69 @@
-import { El } from "../../utils/el.js";
+import { El } from "../../utils/el";
+import { router } from "../../utils/router";
 import { store } from "../../utils/store";
 
 export function Products() {
 	const API_URL = "https://6908e3c92d902d0651b20c81.mockapi.io/users";
 	const container = El({
 		element: "div",
-		className: "p-6 flex flex-col gap-4",
-	});
-
-	const form = El({
-		element: "form",
-		className: "flex gap-2",
+		className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8",
 		children: [
+			// فرم اضافه کردن محصول
 			El({
-				element: "input",
-				placeholder: "Product name",
-				className: "border p-2 rounded w-1/3",
-				id: "name",
-			}),
-			El({
-				element: "input",
-				placeholder: "Price",
-				className: "border p-2 rounded w-1/3",
-				id: "price",
-			}),
-			El({
-				element: "button",
-				innerText: "Add Product",
-				className: "bg-blue-500 text-white px-4 rounded hover:bg-blue-600",
-				type: "submit",
+				element: "form",
+				className:
+					"bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100",
+				children: [
+					El({
+						element: "h2",
+						innerText: "افزودن کاروند جدید",
+						className: "text-2xl font-bold mb-4 text-gray-800",
+					}),
+					El({
+						element: "div",
+						className: "flex flex-col sm:flex-row gap-4",
+						children: [
+							El({
+								element: "input",
+								placeholder: "نام کاروند",
+								className:
+									"flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all",
+								id: "name",
+							}),
+							El({
+								element: "input",
+								placeholder: "سن",
+								className:
+									"flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all",
+								id: "price",
+								type: "number",
+							}),
+							El({
+								element: "button",
+								innerText: "➕ افزودن",
+								className:
+									"px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg font-semibold",
+								type: "submit",
+							}),
+						],
+					}),
+				],
 			}),
 		],
 	});
 
-	container.append(form);
+	const form = container.querySelector("form");
 
 	const productsGrid = El({
 		element: "div",
-		className: "grid grid-cols-3 gap-4",
+		className:
+			"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6",
 	});
-	container.append(productsGrid);
+	container.appendChild(productsGrid);
 
 	async function fetchProducts() {
-		productsGrid.innerHTML = "Loading...";
+		productsGrid.innerHTML =
+			"<div class='col-span-full text-center py-12'><div class='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600'></div><p class='mt-4 text-gray-600'>در حال بارگذاری...</p></div>";
 		try {
 			const res = await fetch(API_URL);
 			const data = await res.json();
@@ -54,62 +75,119 @@ export function Products() {
 				const card = El({
 					element: "div",
 					className:
-						"bg-gray-100 p-4 rounded shadow flex flex-col items-center gap-2",
+						"bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-100 overflow-hidden flex flex-col",
 					children: [
+						// تصویر محصول (placeholder)
 						El({
 							element: "div",
-							innerText: item.name,
-							className: "font-semibold text-center",
-						}),
-						El({
-							element: "div",
-							innerText: `$${item.age}`,
-							className: "text-green-600 font-bold",
-						}),
-
-						// دکمه ویرایش (PUT)
-						El({
-							element: "button",
-							innerText: "Edit",
-							className: "bg-yellow-400 px-2 py-1 rounded text-sm",
-							eventListener: [
-								{
-									event: "click",
-									callback: async () => {
-										const newName = prompt("Enter new name:", item.name);
-										const newPrice = prompt("Enter new price:", item.price);
-										if (!newName || !newPrice) return;
-
-										await fetch(`${API_URL}/${item.id}`, {
-											method: "PUT",
-											headers: { "Content-Type": "application/json" },
-											body: JSON.stringify({
-												name: newName,
-												price: newPrice,
-											}),
-										});
-										fetchProducts();
-									},
-								},
+							className:
+								"h-48 bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 flex items-center justify-center",
+							children: [
+								El({
+									element: "div",
+									innerText: "🛍️",
+									className: "text-6xl opacity-80",
+								}),
 							],
 						}),
-
+						// محتوای کارت
 						El({
-							element: "button",
-							innerText: "Delete",
-							className: "bg-red-500 text-white px-2 py-1 rounded text-sm",
-							eventListener: [
-								{
-									event: "click",
-									callback: async () => {
-										if (confirm("Are you sure?")) {
-											await fetch(`${API_URL}/${item.id}`, {
-												method: "DELETE",
-											});
-											fetchProducts();
-										}
-									},
-								},
+							element: "div",
+							className: "p-5 flex flex-col flex-grow",
+							children: [
+								El({
+									element: "h3",
+									innerText: item.name || "بدون نام",
+									className:
+										"text-xl font-bold mb-2 text-gray-800 line-clamp-2",
+								}),
+								El({
+									element: "div",
+									className: "flex items-center justify-between mb-4",
+									children: [
+										El({
+											element: "span",
+											innerText: "سن:",
+											className: "text-gray-600 text-sm",
+										}),
+										El({
+											element: "span",
+											innerText: `${item.age || "0"} سال`,
+											className: "text-2xl font-bold text-blue-600",
+										}),
+									],
+								}),
+								// دکمه مشاهده جزئیات
+								El({
+									element: "button",
+									innerText: "مشاهده جزئیات",
+									className:
+										"w-full py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg font-semibold mb-3",
+									eventListener: [
+										{
+											event: "click",
+											callback: () => {
+												router.navigate(`/product/${item.id}`);
+											},
+										},
+									],
+								}),
+								// دکمه‌های ویرایش و حذف
+								El({
+									element: "div",
+									className: "flex gap-2 mt-auto",
+									children: [
+										El({
+											element: "button",
+											innerText: "✏️ ویرایش",
+											className:
+												"flex-1 py-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition-colors font-medium text-sm",
+											eventListener: [
+												{
+													event: "click",
+													callback: async () => {
+														const newName = prompt("نام جدید:", item.name);
+														const newAge = prompt("سن جدید:", item.age);
+														if (!newName || !newAge) return;
+
+														await fetch(`${API_URL}/${item.id}`, {
+															method: "PUT",
+															headers: { "Content-Type": "application/json" },
+															body: JSON.stringify({
+																name: newName,
+																age: newAge,
+															}),
+														});
+														fetchProducts();
+													},
+												},
+											],
+										}),
+										El({
+											element: "button",
+											innerText: "🗑️ حذف",
+											className:
+												"flex-1 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors font-medium text-sm",
+											eventListener: [
+												{
+													event: "click",
+													callback: async () => {
+														if (
+															confirm(
+																"آیا مطمئن هستید که می‌خواهید این کاروند را حذف کنید؟"
+															)
+														) {
+															await fetch(`${API_URL}/${item.id}`, {
+																method: "DELETE",
+															});
+															fetchProducts();
+														}
+													},
+												},
+											],
+										}),
+									],
+								}),
 							],
 						}),
 					],
@@ -119,7 +197,8 @@ export function Products() {
 			});
 		} catch (err) {
 			console.error(err);
-			productsGrid.innerHTML = "❌ Failed to load products.";
+			productsGrid.innerHTML =
+				"<div class='col-span-full text-center py-12'><div class='text-red-500 text-2xl mb-2'>❌</div><p class='text-gray-600'>خطا در بارگذاری کاروندان</p></div>";
 			store.setState("productsCount", 0);
 		}
 	}
