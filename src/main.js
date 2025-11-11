@@ -13,7 +13,6 @@ const app = document.getElementById("app");
 app.appendChild(Header());
 
 const pageContainer = document.createElement("div");
-// pageContainer.id = "page-container";
 app.appendChild(pageContainer);
 
 app.appendChild(Footer());

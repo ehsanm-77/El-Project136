@@ -1,5 +1,9 @@
 function createStore() {
-	const state = {};
+	const state = {
+		isModalOpen: false,
+		isLoading: false,
+		sharedValue: "",
+	};
 	const listeners = {};
 
 	function setState(key, value) {

@@ -4,6 +4,7 @@ import { store } from "../../../utils/store";
 
 export function Header() {
 	let userName = "";
+
 	if (store.getState("counter") === undefined) {
 		store.setState("counter", 0);
 	}

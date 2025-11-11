@@ -113,7 +113,7 @@ export function Footer() {
 		const counterValue = value !== undefined ? value : 0;
 		counterDisplay.innerText = `شمارنده: ${counterValue}`;
 		counterDisplay.className =
-			"text-sm font-semibold px-3 py-1.5 bg-white bg-opacity-20 text-black rounded-full backdrop-blur-sm";
+			"text-sm font-semibold bg-blue-300! px-3 py-1.5 bg-white bg-opacity-20 text-black rounded-full backdrop-blur-sm";
 	});
 
 	const initialCounter = store.getState("counter");

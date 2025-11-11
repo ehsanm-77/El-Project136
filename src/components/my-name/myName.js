@@ -1,7 +1,10 @@
 import { El } from "../../utils/el";
+import { router } from "../../utils/router";
 
 export function MyName(params) {
 	const name = params?.name;
+	const route = router.getCurrentParams();
+	console.log(route);
 	console.log(params);
 	const container = El({
 		element: "div",
